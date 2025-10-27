@@ -1,6 +1,4 @@
 # Binaries
-issue-service
-cmd/issue-service/issue-service
 /bin/
 /out/
 /dist/
