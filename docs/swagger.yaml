@@ -40,6 +40,26 @@ definitions:
       status:
         type: string
     type: object
+  dto.JWK:
+    properties:
+      alg:
+        type: string
+      crv:
+        type: string
+      kid:
+        type: string
+      kty:
+        type: string
+      x:
+        type: string
+    type: object
+  dto.JWKSet:
+    properties:
+      keys:
+        items:
+          $ref: '#/definitions/dto.JWK'
+        type: array
+    type: object
   dto.PickupRequest:
     properties:
       token:
@@ -77,26 +97,6 @@ definitions:
       status:
         type: string
     type: object
-  http.jwk:
-    properties:
-      alg:
-        type: string
-      crv:
-        type: string
-      kid:
-        type: string
-      kty:
-        type: string
-      x:
-        type: string
-    type: object
-  http.jwkSet:
-    properties:
-      keys:
-        items:
-          $ref: '#/definitions/http.jwk'
-        type: array
-    type: object
 host: localhost:8081
 info:
   contact: {}
@@ -112,7 +112,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/http.jwkSet'
+            $ref: '#/definitions/dto.JWKSet'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.APIError'
       summary: JWKS набор ключей
       tags:
       - keys
@@ -150,6 +154,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.APIError'
         "503":
           description: Service Unavailable
           schema:
@@ -180,6 +188,10 @@ paths:
           description: Conflict
           schema:
             $ref: '#/definitions/http.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.APIError'
       summary: Сгенерировать pickup-token
       tags:
       - pickup
@@ -206,6 +218,10 @@ paths:
           description: Conflict
           schema:
             $ref: '#/definitions/http.APIError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.APIError'
       summary: Отзыв пропуска
       tags:
       - passes
@@ -229,6 +245,10 @@ paths:
             $ref: '#/definitions/dto.PickupResponse'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/http.APIError'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/http.APIError'
       summary: Получить payload по pickup-token

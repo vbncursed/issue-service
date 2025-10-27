@@ -1,57 +1,27 @@
 package http
 
 import (
-	"encoding/base64"
 	"net/http"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
-)
 
-type jwk struct {
-	Kty string `json:"kty"`
-	Crv string `json:"crv"`
-	Kid string `json:"kid"`
-	Alg string `json:"alg"`
-	X   string `json:"x"`
-}
-type jwkSet struct {
-	Keys []jwk `json:"keys"`
-}
+	"github.com/vbncursed/vkr/issue-service/internal/http/dto"
+	issvc "github.com/vbncursed/vkr/issue-service/internal/service"
+)
 
 // JWKS — отдать набор публичных ключей эмитента
 // @Summary     JWKS набор ключей
 // @Tags        keys
 // @Produce     json
-// @Success     200 {object} jwkSet
+// @Success     200 {object} dto.JWKSet
+// @Failure     500 {object} APIError
 // @Router      /.well-known/keys [get]
-func JWKS(pool *pgxpool.Pool) echo.HandlerFunc {
+func JWKS(svc *issvc.Service) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		rows, err := pool.Query(c.Request().Context(), `SELECT key_id, alg, public_key FROM issuer_keys WHERE status IN ('active','retired')`)
+		keys, err := svc.ListIssuerKeys(c.Request().Context())
 		if err != nil {
 			return writeJSON(c, http.StatusInternalServerError, APIError{Code: "internal", Message: "db"})
 		}
-		defer rows.Close()
-		out := jwkSet{}
-		for rows.Next() {
-			var kid, alg string
-			var pub []byte
-			if err := rows.Scan(&kid, &alg, &pub); err != nil {
-				return writeJSON(c, http.StatusInternalServerError, APIError{Code: "internal", Message: "db"})
-			}
-			switch alg {
-			case "EdDSA":
-				out.Keys = append(out.Keys, jwk{
-					Kty: "OKP",
-					Crv: "Ed25519",
-					Kid: kid,
-					Alg: "EdDSA",
-					X:   base64.RawURLEncoding.EncodeToString(pub),
-				})
-			default:
-				// skip unsupported
-			}
-		}
-		return writeJSON(c, http.StatusOK, out)
+		return writeJSON(c, http.StatusOK, dto.FromIssuerKeys(keys))
 	}
 }
