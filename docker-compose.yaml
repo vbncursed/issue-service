@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: issue
+    ports: ["5433:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d issue"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  issue:
+    build: .
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgres://postgres:postgres@db:5432/issue?sslmode=disable}
+      BIND: ${BIND:-:8081}
+      MAX_TTL_H: ${MAX_TTL_H:-24}
+      ENABLE_SWAGGER: ${ENABLE_SWAGGER:-1}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports: ["8081:8081"]
+
+

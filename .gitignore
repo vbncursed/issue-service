@@ -1,0 +1,38 @@
+# Binaries
+issue-service
+cmd/issue-service/issue-service
+/bin/
+/out/
+/dist/
+/build/
+
+# Go artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.coverprofile
+coverage.*
+cover.out
+
+# Env files
+.env
+.env.*
+
+# Logs
+*.log
+logs/
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Vendors (if ever used)
+vendor/

@@ -1,0 +1,255 @@
+basePath: /api/v1
+definitions:
+  dto.ApproveResponse:
+    properties:
+      expires_at:
+        type: string
+      id:
+        type: string
+      pickup_token:
+        type: string
+    type: object
+  dto.CreatePassRequest:
+    properties:
+      attrs:
+        additionalProperties: {}
+        type: object
+      exp:
+        type: string
+      nbf:
+        type: string
+      one_time:
+        type: boolean
+      org_id:
+        type: string
+      policy_id:
+        type: string
+      subject_name:
+        type: string
+      zone_id:
+        type: string
+    type: object
+  dto.CreatePassResponse:
+    properties:
+      id:
+        type: string
+      issuer_key_id:
+        type: string
+      payload:
+        type: string
+      status:
+        type: string
+    type: object
+  dto.PickupRequest:
+    properties:
+      token:
+        type: string
+    type: object
+  dto.PickupResponse:
+    properties:
+      issuer_key_id:
+        type: string
+      payload:
+        type: string
+    type: object
+  dto.RevokeResponse:
+    properties:
+      id:
+        type: string
+      status:
+        type: string
+    type: object
+  http.APIError:
+    properties:
+      code:
+        type: string
+      details: {}
+      message:
+        type: string
+    type: object
+  http.HealthzResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  http.ReadyzResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  http.jwk:
+    properties:
+      alg:
+        type: string
+      crv:
+        type: string
+      kid:
+        type: string
+      kty:
+        type: string
+      x:
+        type: string
+    type: object
+  http.jwkSet:
+    properties:
+      keys:
+        items:
+          $ref: '#/definitions/http.jwk'
+        type: array
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: Сервис выпуска одноразовых пропусков.
+  title: issue-service API
+  version: "1.0"
+paths:
+  /.well-known/keys:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.jwkSet'
+      summary: JWKS набор ключей
+      tags:
+      - keys
+  /healthz:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.HealthzResponse'
+      summary: Liveness probe
+      tags:
+      - meta
+  /passes:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Create pass
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreatePassRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.CreatePassResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.APIError'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/http.APIError'
+      summary: Выпуск пропуска
+      tags:
+      - passes
+  /passes/{id}/approve:
+    post:
+      parameters:
+      - description: Pass ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ApproveResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.APIError'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.APIError'
+      summary: Сгенерировать pickup-token
+      tags:
+      - pickup
+  /passes/{id}/revoke:
+    post:
+      parameters:
+      - description: Pass ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.RevokeResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.APIError'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.APIError'
+      summary: Отзыв пропуска
+      tags:
+      - passes
+  /pickup:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Pickup
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PickupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PickupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.APIError'
+      summary: Получить payload по pickup-token
+      tags:
+      - pickup
+  /readyz:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.ReadyzResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/http.APIError'
+      summary: Readiness probe
+      tags:
+      - meta
+schemes:
+- http
+swagger: "2.0"
