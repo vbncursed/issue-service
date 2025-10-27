@@ -28,7 +28,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.jwkSet"
+                            "$ref": "#/definitions/dto.JWKSet"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.APIError"
                         }
                     }
                 }
@@ -89,6 +95,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/http.APIError"
                         }
                     },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.APIError"
+                        }
+                    },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
@@ -134,6 +146,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/http.APIError"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.APIError"
+                        }
                     }
                 }
             }
@@ -174,6 +192,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/http.APIError"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.APIError"
+                        }
                     }
                 }
             }
@@ -210,6 +234,12 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/http.APIError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/http.APIError"
                         }
@@ -305,6 +335,37 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.JWK": {
+            "type": "object",
+            "properties": {
+                "alg": {
+                    "type": "string"
+                },
+                "crv": {
+                    "type": "string"
+                },
+                "kid": {
+                    "type": "string"
+                },
+                "kty": {
+                    "type": "string"
+                },
+                "x": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.JWKSet": {
+            "type": "object",
+            "properties": {
+                "keys": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.JWK"
+                    }
+                }
+            }
+        },
         "dto.PickupRequest": {
             "type": "object",
             "properties": {
@@ -360,37 +421,6 @@ const docTemplate = `{
             "properties": {
                 "status": {
                     "type": "string"
-                }
-            }
-        },
-        "http.jwk": {
-            "type": "object",
-            "properties": {
-                "alg": {
-                    "type": "string"
-                },
-                "crv": {
-                    "type": "string"
-                },
-                "kid": {
-                    "type": "string"
-                },
-                "kty": {
-                    "type": "string"
-                },
-                "x": {
-                    "type": "string"
-                }
-            }
-        },
-        "http.jwkSet": {
-            "type": "object",
-            "properties": {
-                "keys": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/http.jwk"
-                    }
                 }
             }
         }

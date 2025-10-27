@@ -25,7 +25,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.jwkSet"
+                            "$ref": "#/definitions/dto.JWKSet"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.APIError"
                         }
                     }
                 }
@@ -86,6 +92,12 @@
                             "$ref": "#/definitions/http.APIError"
                         }
                     },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.APIError"
+                        }
+                    },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
@@ -131,6 +143,12 @@
                         "schema": {
                             "$ref": "#/definitions/http.APIError"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.APIError"
+                        }
                     }
                 }
             }
@@ -171,6 +189,12 @@
                         "schema": {
                             "$ref": "#/definitions/http.APIError"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.APIError"
+                        }
                     }
                 }
             }
@@ -207,6 +231,12 @@
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/http.APIError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/http.APIError"
                         }
@@ -302,6 +332,37 @@
                 }
             }
         },
+        "dto.JWK": {
+            "type": "object",
+            "properties": {
+                "alg": {
+                    "type": "string"
+                },
+                "crv": {
+                    "type": "string"
+                },
+                "kid": {
+                    "type": "string"
+                },
+                "kty": {
+                    "type": "string"
+                },
+                "x": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.JWKSet": {
+            "type": "object",
+            "properties": {
+                "keys": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.JWK"
+                    }
+                }
+            }
+        },
         "dto.PickupRequest": {
             "type": "object",
             "properties": {
@@ -357,37 +418,6 @@
             "properties": {
                 "status": {
                     "type": "string"
-                }
-            }
-        },
-        "http.jwk": {
-            "type": "object",
-            "properties": {
-                "alg": {
-                    "type": "string"
-                },
-                "crv": {
-                    "type": "string"
-                },
-                "kid": {
-                    "type": "string"
-                },
-                "kty": {
-                    "type": "string"
-                },
-                "x": {
-                    "type": "string"
-                }
-            }
-        },
-        "http.jwkSet": {
-            "type": "object",
-            "properties": {
-                "keys": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/http.jwk"
-                    }
                 }
             }
         }

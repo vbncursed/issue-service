@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -31,12 +30,15 @@ func Load() Config {
 		ttlHours = 24
 	}
 	swagEnv := getenv("ENABLE_SWAGGER", "false")
-	swag := swagEnv == "true" || strings.EqualFold(swagEnv, "true")
+	b, err := strconv.ParseBool(swagEnv)
+	if err != nil {
+		b = false
+	}
 	cfg := Config{
 		Bind:          bind,
 		DatabaseURL:   db,
 		MaxTTL:        time.Duration(ttlHours) * time.Hour,
-		EnableSwagger: swag,
+		EnableSwagger: b,
 	}
 	log.Printf("config: bind=%s ttl=%s swagger=%v", cfg.Bind, cfg.MaxTTL, cfg.EnableSwagger)
 	return cfg
